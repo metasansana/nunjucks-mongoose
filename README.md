@@ -8,7 +8,7 @@ Query mongoose models from nunjucks templates.
 ```javascript
 var ext = require('nunjucks-mongoose');
 
-nunjucks.configure('views).addExtenstion(ext);
+nunjucks.configure('views').addExtenstion(ext);
 ```
 In your templates:
 
@@ -33,7 +33,7 @@ The name of the variable the model will be bound to.
 Pass an object for this value and the model will instantiated with its values. This is optional.
 
 ####chain
-An array of objects that represents methods that will be called in a chain on the model. ('m' for the method name and 'a' and object representing arguments)
+An array of objects that represents methods to be called in a chain on the model. ('m' for the method name and 'a' any arguments)
 
 
 ##Limitations
