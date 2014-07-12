@@ -1,7 +1,12 @@
 {
   "name": "nunjucks-mongoose",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Nunjucks extenstion that lets you query mongoose models from templates.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/metasansana/nunjucks-mongoose.git"
+  },
+
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
