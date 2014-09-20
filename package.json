@@ -6,7 +6,6 @@
     "type": "git",
     "url": "https://github.com/metasansana/nunjucks-mongoose.git"
   },
-
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,5 +17,13 @@
     "async"
   ],
   "author": "Lasana Murray <lmurray@quenk.com> (http://blog.quenk.com/)",
-  "license": "The Unlicense"
+  "license": "The Unlicense",
+  "devDependencies": {
+    "express": "^4.9.3",
+    "mocha": "^1.21.4",
+    "mongoose": "^3.8.16",
+    "must": "^0.12.0",
+    "nunjucks": "^1.0.7",
+    "supertest": "^0.13.0"
+  }
 }
