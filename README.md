@@ -81,4 +81,4 @@ I added some basic tests, hope to bring more in the future. ```npm test```
 
 ##Documentation
 
-You just read it. If you need more infomation than this email me lmurray at quenk dot com. Or tweet me @metasansana.
+You just read it. If you need more infomation than this email me lmurray at quenk dot com. Or tweet me [@metasansana](https://twitter.com/metasansana).
