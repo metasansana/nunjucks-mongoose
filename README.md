@@ -14,9 +14,9 @@ of in route handlers. I wrote this to do just that.
 In your express app:
 
 ```javascript
-var MongooseExtenstion = require('nunjucks-mongoose');
+var MongooseExtension = require('nunjucks-mongoose');
 
-nunjucks.configure('views').addExtenstion('MongooseExtenstion', new MongooseExtenstion(mongoose, 'get'));
+nunjucks.configure('views').addExtension('MongooseExtension', new MongooseExtension(mongoose, 'get'));
 ```
 
 ##Usage
