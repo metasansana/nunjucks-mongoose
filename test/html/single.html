@@ -1,0 +1,2 @@
+{% provide 'data' from 'Mock' using 'findOne' %}{% done %}<p>{{data.name}}</p>
+{% provide 'data2' from 'Mock' using 'findOne' with {name:'Mock2'} %}{% done %}<b>{{data2.name}}</b>

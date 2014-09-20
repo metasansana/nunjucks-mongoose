@@ -1,46 +1,84 @@
 nunjucks-mongoose
 =================
 
-Query mongoose models from nunjucks templates.
+Call query methods on mongoose models straight from your nunjucks templates.
+
+##Motivation
+Sometimes it seems more intuitive to load database data in  views from them, instead
+of in route handlers. I wrote this to do just that.
+
+##Installation
+
+``` npm install nunjucks-mongoose ```
+
+In your express app:
+
+```javascript
+var MongooseExtension = require('nunjucks-mongoose');
+var nunjucks = require('nunjucks');
+
+//nunjucks.configure returns an Environment
+var env = nunjucks.configure('views');
+env.addExtension('MongooseExtension', new MongooseExtension(mongoose, 'get'));
+```
 
 ##Usage
 
-```javascript
-var ext = require('nunjucks-mongoose');
+**Note: Version 0.2.x breaks compatibility with previous releases.**
 
-nunjucks.configure('views').addExtenstion(ext);
+With 0.2.x ownwards, I tried to make the syntaxe fluid and easier to remember:
+
+```html
+{% get <variable> from <model> using <method> with <arg1>,<arg2>,.. %}
+{% done %}
 ```
-In your templates:
+
+Where ``<variable>(string|required)`` is the name of the variable to bind to (will be available in your template via {{name}} etc).
+
+``<model>(string|required)`` is the name of the model you should have already registered with mongoose.
+
+``<method>(string|required)`` is the method we will use on the model. If you want to use a custom
+method, you will have to ensure it returns the mongoose Query object. The extension
+internally calls methods by using ``exec``.
+
+``with`` indicates to the parser that the rest of the block contains arguments to pass 
+to the method. That will be ``<arg1>,<arg2>`` etc. If a method receives no args, then ommit with.
+
+###Chaining
+
+You can chain multiple method calls like ``limit``, ``populate`` etc. Each additional method call must use a ``then`` block. This has nothing to do with promises, it's just easier to read:
+
+```html
+{% get <variable> from <model> using <method> with <arg1>,<arg2>,.. %}
+{% then <method> with <arg1>,<arg2>,.. %}
+{% then <method> %}
+{% done %}
+```
+
+##Example
+
+Here is an example use case:
 
 ```html
 <html>
-{% mongoose model='product',bind=product,create={}, chain=[{m:'findOne', a:{sku:12345}}, {m:'limit',a:1}] %}
-
-<p>You selected {{ product.title }} </p>
-
+{% get 'products' from 'Product' using 'find' with {_id:false} %}
+{% then 'limit' with 10 %}
+{% then 'populate' %}
+{% done %}
+<body>
+{% for product in products %}
+<p>We sell {{ product.title }} in category {{product.category}}</p>
+{% endfor %}
+</body>
 </html>
 ```
+##Issues
 
-##Api
+If you come across bugs or have ideas on improving this, please file an issue.
 
-####model
-The name of the model to query.
+##Tests
+I added some basic tests, hope to bring more in the future. ```npm test```
 
-####bind
-The name of the variable the model will be bound to.
+##Documentation
 
-####create
-Pass an object for this value and the model will instantiated with its values. This is optional.
-
-####chain
-An array of objects that represents methods to be called in a chain on the model. ('m' for the method name and 'a' any arguments)
-
-
-##Limitations
-
-Try not to get to complicated with the chain, things get messy pretty quickly.
-
-I created this because I wanted a way to let templates load models rather than
-in the routes. I'm using it in a few projects but there are no tests yet. If it 
-proves to be useful to you let [me](https://twitter.com/metasansana)
-
+You just read it. If you need more infomation than this email me lmurray at quenk dot com. Or tweet me [@metasansana](https://twitter.com/metasansana).
