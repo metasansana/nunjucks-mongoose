@@ -26,24 +26,23 @@ env.addExtension('MongooseExtension', new MongooseExtension(mongoose, 'get'));
 
 **Note: Version 0.2.x breaks compatibility with previous releases.**
 
-With 0.2.x ownwards I tried to make the syntax more fluid and easier to remember
-however brevity was sacrificed:
+With 0.2.x ownwards, I tried to make the syntaxe fluid and easier to remember:
 
 ```html
 {% get <variable> from <model> using <method> with <arg1>,<arg2>,.. %}
 {% done %}
 ```
 
-Where <variable>(string|required) is the name of the variable to bind to (will be available in your template via {{name}} etc).
+Where ``<variable>(string|required)`` is the name of the variable to bind to (will be available in your template via {{name}} etc).
 
-<model>(string|required) is the name of the model you should have already registered with mongoose.
+``<model>(string|required)`` is the name of the model you should have already registered with mongoose.
 
-<method>(string|required) is the method we will use on the model. If you want to use a custom
+``<method>(string|required)`` is the method we will use on the model. If you want to use a custom
 method, you will have to ensure it returns the mongoose Query object. The extension
 internally calls methods by using ``exec``.
 
 ``with`` indicates to the parser that the rest of the block contains arguments to pass 
-to the method. That will be <arg1>,<arg2> etc. If a method receives no args, then ommit with.
+to the method. That will be ``<arg1>,<arg2>`` etc. If a method receives no args, then ommit with.
 
 ###Chaining
 
@@ -52,7 +51,7 @@ You can chain multiple method calls like ``limit``, ``populate`` etc. Each addit
 ```html
 {% get <variable> from <model> using <method> with <arg1>,<arg2>,.. %}
 {% then <method> with <arg1>,<arg2>,.. %}
-{% then <method %}
+{% then <method> %}
 {% done %}
 ```
 
@@ -66,10 +65,11 @@ Here is an example use case:
 {% then 'limit' with 10 %}
 {% then 'populate' %}
 {% done %}
-
+<body>
 {% for product in products %}
 <p>We sell {{ product.title }} in category {{product.category}}</p>
 {% endfor %}
+</body>
 </html>
 ```
 ##Issues
@@ -81,4 +81,4 @@ I added some basic tests, hope to bring more in the future. ```npm test```
 
 ##Documentation
 
-You just read it. :/
+You just read it. If you need more infomation than this email me lmurray at quenk dot com. Or tweet me @metasansana.
