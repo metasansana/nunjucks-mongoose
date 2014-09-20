@@ -15,8 +15,11 @@ In your express app:
 
 ```javascript
 var MongooseExtension = require('nunjucks-mongoose');
+var nunjucks = require('nunjucks');
 
-nunjucks.configure('views').addExtension('MongooseExtension', new MongooseExtension(mongoose, 'get'));
+//nunjucks.configure returns an Environment
+var env = nunjucks.configure('views');
+env.addExtension('MongooseExtension', new MongooseExtension(mongoose, 'get'));
 ```
 
 ##Usage
