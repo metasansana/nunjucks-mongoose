@@ -12,6 +12,7 @@
   },
   "keywords": [
     "nunjucks",
+    "keystone",
     "mongoose",
     "mvc"
   ],
