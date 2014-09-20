@@ -4,7 +4,7 @@ nunjucks-mongoose
 Call query methods on mongoose models straight from your nunjucks templates.
 
 ##Motivation
-Sometimes it seems more intuitive to load database data in our views directly instead
+Sometimes it seems more intuitive to load database data in  views from them, instead
 of in route handlers. I wrote this to do just that.
 
 ##Installation
