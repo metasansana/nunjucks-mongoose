@@ -40,24 +40,37 @@ describe('mongoose extension', function() {
 
 	}
 
+	describe('single calls', function() {
 
-	it('should render a view for one method call', function(done) {
+		it('should render a view for one method call', function(done) {
 
-		render('single.html').expect(/Mock Name/).expect(/Mock2/).end(done);
+			render('single.html').expect(/Mock Name/).expect(/Mock2/).end(done);
+
+		});
+
+		it('should render a string view for one method call', function(done) {
+
+			renderString('single.html', "{% provide 'data' from 'Mock' using 'findOne' %}{% done %}<p>{{data.name}}</p>" +
+				"{% provide 'data2' from 'Mock' using 'findOne' with {name:'Mock2'} %}{% done %}<p>{{data2.name}}</p>").expect(/Mock Name/).expect(/Mock2/).end(done);
+
+
+
+		});
+
 
 	});
 
-	it('should render a string view for one method call', function(done) {
+	describe('chained calls', function() {
 
-		renderString('single.html', "{% provide 'data' from 'Mock' using 'findOne' %}{% done %}<p>{{data.name}}</p>" +
-			"{% provide 'data2' from 'Mock' using 'findOne' with {name:'Mock2'} %}{% done %}<p>{{data2.name}}</p>").expect(/Mock Name/).expect(/Mock2/).end(done);
+		it('should render a view for chained method calls', function(done) {
+
+			render('chained.html').expect(/Mock Name/).expect(/Mock2/).end(done);
+
+		});
 
 
 
 	});
-
-
-
 
 
 });

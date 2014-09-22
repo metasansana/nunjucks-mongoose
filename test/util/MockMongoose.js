@@ -18,7 +18,7 @@ module.exports = function MockMongoose() {
 	 */
 	this.model = function(name) {
 
-            return new Mock();
+		return new Mock();
 
 
 	};
@@ -30,6 +30,8 @@ module.exports = function MockMongoose() {
 
 var Mock = function() {
 
+	var one = false;
+        var self = this;
 
 	/**
 	 * find
@@ -81,6 +83,7 @@ var Mock = function() {
 	 */
 	this.limit = function() {
 
+		return self;
 
 
 	};
@@ -97,6 +100,7 @@ var Mock = function() {
 	this.where = function() {
 
 
+		return self;
 
 	};
 
@@ -110,17 +114,39 @@ var Mock = function() {
 	 */
 	this.exec = function(cb) {
 
+		var data = {
+			name: 'Mock Name'
+		};
+
 		if (one) {
-			if (!data)
-				data = {
-					name: 'Mock Name'
-				};
 			cb(null, data);
+
+		} else {
+
+			cb(null, [data, data, data, data]);
+
 
 		}
 
 
 	};
+
+
+	/**
+	 * populate
+	 *
+	 * @method populate
+	 * params
+	 * @return
+	 *
+	 */
+	this.populate = function() {
+
+		return self;
+
+
+	};
+
 
 
 
