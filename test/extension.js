@@ -1,6 +1,5 @@
 var env;
 var app;
-var must = require('must');
 var express = require('express');
 var request = require('supertest');
 var nunjucks = require('nunjucks');
