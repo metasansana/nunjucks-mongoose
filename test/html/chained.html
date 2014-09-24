@@ -1,16 +1,16 @@
 {% provide 'data' from 'Mock' using 'find' %}
 {% then 'limit' with 3 %}
 {% done %}
-<p>{{data0.name}}</p>
-{% provide 'data' from 'Mock' using 'find' %}
+<p>{{data[0].name}}</p>
+{% provide 'data1' from 'Mock' using 'find' %}
 {% then 'limit' with 3 %}
 {% then 'populate' %}
 {% done %}
-<p>{{data.name}}</p>
+<p>{{data1[0].name}}</p>
 {% provide 'data2' from 'Mock' using 'find' with {}, {_id:0} %}
 {% then 'limit' with 3 %}
 {% then 'limit' with 3 %}
 {% then 'populate' %}
 {% done %}
-<p>{{data2.name}}</p>
+<p>{{data2[0].name}}</p>
 

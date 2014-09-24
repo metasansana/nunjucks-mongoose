@@ -1,144 +1,131 @@
 /**
- * MongooseExtenstion is a nunjucks extension that allows as to call
+ * MongooseExtension is a nunjucks extension that allows us to call
  * methods defined on mongoose models from within templates.
+ *
+ * Currently it only supports methods that will return the mongoose Query object.
  * Usage:
  *
- *  {% mongoose model='product',bind=product,create={},chain=[{m:'findOne', a:{sku:12345}},
- *  {m:'limit',a:1}] %}
+ *  {% provide 'products' from 'Product' using 'find' %}
+ *  {% then 'limit' with 10 %}
+ *  {% done %}
  * @class MongooseExtenstion
- * @param {String} register The tag name for this extension.
  * @param {Object} mongoose The mongoose object.
+ * @param {String} name The tag name to use in the templates.
  * @constructor
  *
  */
-module.exports = function MongooseExtenstion(mongoose, name) {
+module.exports = function MongooseExtension(mongoose, name) {
 
 	this.tags = [name || 'get'];
-	this.calls = [];
 
 	this.parse = function(parser, nodes, lexer) {
 
+		var parseWith = function(nodeList) {
 
-		var calls = [];
-		var childs = [];
-		var args;
+			//If it has args, then grab that too.
+			if (parser.skipSymbol('with')) {
+
+				nodeList.addChild(parser.parsePrimary());
+
+				while (true) {
+
+					if (parser.peekToken().type == lexer.TOKEN_BLOCK_END)
+						break;
+
+					if (!parser.skip(lexer.TOKEN_COMMA))
+						parser.fail('Expected comma!');
+
+					nodeList.addChild(parser.parsePrimary());
+
+
+
+				}
+			}
+		};
+
+
+		var firstCall = new nodes.Array();
+		var meta = new nodes.Array();
+		var nodeList = new nodes.NodeList();
 
 		// get the tag token
 		var tok = parser.nextToken();
-		childs.push(parser.parsePrimary());
+
+		//Get the bind variable name
+		meta.addChild(parser.parsePrimary());
 
 		if (!parser.skipSymbol('from'))
 			parser.fail('You must specify the model using the keyword \'from\'');
-		childs.push(parser.parsePrimary());
+
+		//Get the target model name.
+		meta.addChild(parser.parsePrimary());
 
 		if (!parser.skipSymbol('using'))
 			parser.fail('You must specify the first method called by using the keyword \'using\'!');
 
-		childs.push(parser.parsePrimary());
 
-		parser.skipSymbol('with');
-		args = parser.parseSignature(null, true);
+		//Get the name of the first method to call.
+		firstCall.addChild(parser.parsePrimary());
 
-		calls.push({
-			head: 0,
-			offset: args.children.length + 1,
-			next: args.children.length + 1
-		});
+		parseWith(firstCall);
 
-		args.children.unshift.apply(args.children, childs);
 		parser.advanceAfterBlockEnd(tok.value);
 
-		var thenArgs;
-		var tmp;
-		var nextCall;
-		var currentToken;
+		nodeList.addChild(meta);
+		nodeList.addChild(firstCall);
 
+		var nextList;
 
 		while (true) {
 
-			nextCall = {
-				head: '',
-				offset: '',
-				next: ''
-			};
+			nextList = new nodes.Array();
 
 			parser.parseUntilBlocks('then', 'done');
 
 			if (parser.peekToken().value == 'done')
 			//We are at the end, no more work to do.
 				break;
-
-
 			//Deal with the next then tag.
 
-			//Save the token we are working with
-			currentToken = parser.nextToken();
+			//Select the next then token
+			parser.nextToken();
 
 			//Grab the name of the method to be called.
-			tmp = parser.parsePrimary();
+			nextList.addChild(parser.parsePrimary());
 
-			//Does this method come with arguments?
-			if (parser.skipSymbol('with')) {
+			parseWith(nextList);
 
-				//Then gooble them up and use them as the NodeList
-				thenArgs = parser.parseSignature(null, true);
-				thenArgs.children.unshift(tmp);
-
-				args.children.push.apply(args.children, thenArgs.children);
-
-				nextCall.offset = thenArgs.children.length;
-
-
-			} else {
-
-
-				nextCall.offset = 1;
-				args.children.push(tmp);
-
-
-			}
-			nextCall.head = calls[calls.length - 1].next;
-			nextCall.next = nextCall.head + nextCall.offset;
-			calls.push(nextCall);
+			nodeList.addChild(nextList);
 
 			parser.advanceAfterBlockEnd('then');
 
 		}
+		var newShit = new nodes.NodeList();
 		parser.advanceAfterBlockEnd();
-		this.calls.push(calls);
-		return new nodes.CallExtensionAsync(this, 'run', args);
+		return new nodes.CallExtensionAsync(this, 'run', nodeList, []);
 	};
 
-	this.run = function(context, bindName, modelName) {
+	this.run = function(context, meta) {
 
 		var cb = arguments[arguments.length - 1];
-		var params = new Array(arguments.length - 3);
-		var calls = this.calls.shift();
+		var calls = new Array(arguments.length - 2);
 
-		for (var i = 3; i < arguments.length - 1; ++i) {
-			params[i - 3] = arguments[i];
+		for (var i = 2; i < arguments.length - 1; ++i) {
+			calls[i] = arguments[i];
 		}
 
-		var model = mongoose.model(modelName);
-		var target = model;
-		var next;
+		var target = mongoose.model(meta[1]);
 		var method;
-		var args;
-		var src;
+
 		calls.forEach(function(call) {
-
-			args = null;
-			src = params.slice();
-			method = src[call.head];
-			args = src.splice(call.head + 1, call.offset - 1);
-			target = model[method].apply(target, args);
-
-
+			method = call.shift();
+			target = target[method].apply(target, call);
 		});
+
 		target.exec(function(err, data) {
 
 			if (err) return cb(err, null);
-			context.ctx[bindName] = data;
+			context.ctx[meta[0]] = data;
 			cb(null, null);
 
 		});

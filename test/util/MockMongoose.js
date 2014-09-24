@@ -30,8 +30,7 @@ module.exports = function MockMongoose() {
 
 var Mock = function() {
 
-	var one = false;
-        var self = this;
+	var self = this;
 
 	/**
 	 * find
@@ -43,6 +42,7 @@ var Mock = function() {
 	 */
 	this.find = function() {
 
+		return self;
 
 
 	};
@@ -54,21 +54,11 @@ var Mock = function() {
 	 * @return
 	 *
 	 */
-	this.findOne = function(o) {
+	this.findOne = function() {
 
-		return {
+          this.ONE_MODE = true;
+          return self;
 
-			exec: function(cb) {
-				if (o)
-					cb(null, o);
-
-				cb(null, {
-					name: 'Mock Name'
-				});
-
-			}
-
-		};
 
 	};
 
@@ -118,7 +108,8 @@ var Mock = function() {
 			name: 'Mock Name'
 		};
 
-		if (one) {
+		if (this.ONE_MODE) {
+                  this.ONE_MODE =false;
 			cb(null, data);
 
 		} else {
