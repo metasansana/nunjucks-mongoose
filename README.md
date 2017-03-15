@@ -1,6 +1,8 @@
 nunjucks-mongoose
 =================
 
+# Status: Cancelled. Here for reference purposes only.
+
 Call query methods on mongoose models straight from your nunjucks templates.
 
 ##Motivation
